@@ -5,6 +5,7 @@ module Paperclip
   class UrlGenerator
     def initialize(attachment)
       @attachment = attachment
+      @parser = URI::RFC2396_Parser.new
     end
 
     def for(style_name, options)
@@ -15,9 +16,6 @@ module Paperclip
       escaped = escape_url_as_needed(interpolated, options)
       timestamp_as_needed(escaped, options)
     end
-
-    private
-    parser = URI::RFC2396_Parser.new
 
     attr_reader :attachment
     delegate :options, to: :attachment, prefix: true
@@ -66,7 +64,7 @@ module Paperclip
       if url.respond_to?(:escape)
         url.escape
       else
-        parser.escape(url).gsub(escape_regex){|m| "%#{m.ord.to_s(16).upcase}" }
+        @parser.escape(url).gsub(escape_regex){|m| "%#{m.ord.to_s(16).upcase}" }
       end
     end
 
