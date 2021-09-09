@@ -17,6 +17,7 @@ module Paperclip
     end
 
     private
+    parser = URI::RFC2396_Parser.new
 
     attr_reader :attachment
     delegate :options, to: :attachment, prefix: true
@@ -65,7 +66,7 @@ module Paperclip
       if url.respond_to?(:escape)
         url.escape
       else
-        CGI.escape(url).gsub(escape_regex){|m| "%#{m.ord.to_s(16).upcase}" }
+        parser.escape(url).gsub(escape_regex){|m| "%#{m.ord.to_s(16).upcase}" }
       end
     end
 
